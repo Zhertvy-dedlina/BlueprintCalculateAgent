@@ -9,7 +9,7 @@ import chat.giga.model.completion.CompletionResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.vsu.zhertvydedlina.aiservice.component.GigachatConnection;
+import ru.vsu.zhertvydedlina.aiservice.component.GigaChatConnection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -23,7 +23,7 @@ class AiServiceApplicationTests {
     @Test
     @DisplayName("Проверка работы клиента giga chat")
     void testGigaChatClient() {
-        GigaChatClient client = new GigachatConnection().gigaChatClient();
+        GigaChatClient client = new GigaChatConnection().gigaChatClient();
 
         CompletionResponse response = client.completions(CompletionRequest.builder()
                         .model(ModelName.GIGA_CHAT_2)

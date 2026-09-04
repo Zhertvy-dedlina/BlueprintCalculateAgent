@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GigachatConnection {
+public class GigaChatConnection {
     @Bean
     public GigaChatClient gigaChatClient() {
         String authKey = System.getenv("GIGA_AUTH_KEY");
