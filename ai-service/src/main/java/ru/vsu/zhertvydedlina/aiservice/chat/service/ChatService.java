@@ -1,21 +1,18 @@
 package ru.vsu.zhertvydedlina.aiservice.chat.service;
 
 import org.springframework.stereotype.Service;
-import ru.vsu.zhertvydedlina.aiservice.chat.MessageRequestDto;
-import ru.vsu.zhertvydedlina.aiservice.chat.response.ChatWithMessagesResponseDto;
-import ru.vsu.zhertvydedlina.aiservice.chat.response.MessageWithFileNamesResponseDto;
+import ru.vsu.zhertvydedlina.aiservice.chat.entity.Chat;
 
 import java.util.List;
 
 @Service
 public interface ChatService {
-    List<Long> getUserChats(Long userId);
+    Chat getChatById(long chatId);
+    List<Chat> getChatsByUserId(long userId);
 
-    ChatWithMessagesResponseDto getChatMessages(Long chatId, int page, int size);
+    Chat saveChat(Chat chat);
+    Long deleteChatById(long chatId);
 
-    ChatWithMessagesResponseDto createChatFromFirstMessage(MessageRequestDto message);
-
-    MessageWithFileNamesResponseDto addMessageToChat(Long chatId, MessageRequestDto message);
-
-    Long deleteChat(Long chatId);
+    boolean existsById(long chatId);
+    boolean checkChatOwner(long chatId, long userId);
 }
