@@ -7,7 +7,6 @@ import java.util.Set;
 //для проверки расширения
 @Service
 public class FileValidationService {
-
     private static final Set<String> ALLOWED_EXTENSIONS = Set.of(
             "pdf",
             "png",

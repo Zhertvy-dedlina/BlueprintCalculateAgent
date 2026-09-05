@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.List;
 
 @Data
 @Entity
@@ -23,8 +24,8 @@ public class Message {
     private Long chatId;
     @Column(name = "user_id")
     private Long userId;
-    @Column(name = "file_id")
-    private Long fileId;
+    @Column(name = "files_id")
+    private List<Long> filesId;
     private String message;
-    private Instant timestamp;
+    private Instant timestamp = Instant.now();
 }

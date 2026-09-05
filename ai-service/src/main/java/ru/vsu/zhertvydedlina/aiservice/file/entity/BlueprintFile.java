@@ -32,5 +32,5 @@ public class BlueprintFile {
     private String storageKey;
 
     @Column(name = "giga_chat_file_id")
-    private String gigaChatFileId;; //идентификаторы внешнего API обычно String, если документация API явно не гарантирует число
+    private String gigaChatFileId; //идентификаторы внешнего API обычно String, если документация API явно не гарантирует число
 }
