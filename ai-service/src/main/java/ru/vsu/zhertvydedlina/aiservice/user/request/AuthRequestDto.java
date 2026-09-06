@@ -4,7 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record AuthRequestDto(
-        String email,
+        String username,
         String password
 ) {
 }
