@@ -19,4 +19,6 @@ public interface BlueprintFileService {
     FileWithDataDto loadBlueprintFileByName(String name);
 
     List<FileResponseDto> uploadBlueprintFile(MessageRequestDto message);
+
+    FileResponseDto deleteBlueprintFile(Long id);
 }
