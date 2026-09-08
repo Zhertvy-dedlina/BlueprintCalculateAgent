@@ -20,7 +20,6 @@ public class JwtServiceImpl implements JwtService {
 
     public final JwtBuilder signedJwtBuilder;
     private final UserService userService;
-    private final JwtComponent jwtComponent;
 
     @Override
     public String extractToken(HttpServletRequest request) {
