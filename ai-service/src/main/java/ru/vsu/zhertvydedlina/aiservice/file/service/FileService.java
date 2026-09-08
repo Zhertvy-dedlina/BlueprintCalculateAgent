@@ -30,7 +30,7 @@ public class FileService {
 
         String storageKey =
                 "chats/" + chatId +
-                        "/files/" + UUID.randomUUID() +
+                        "/filesId/" + UUID.randomUUID() +
                         "/" + originalFileName;
 
         fileStorageService.save(file, storageKey);

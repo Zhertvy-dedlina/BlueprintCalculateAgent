@@ -1,9 +1,8 @@
 package ru.vsu.zhertvydedlina.aiservice.file.service;
 
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
-import ru.vsu.zhertvydedlina.aiservice.chat.MessageRequestDto;
-import ru.vsu.zhertvydedlina.aiservice.file.dto.response.FileResponseDto;
-import ru.vsu.zhertvydedlina.aiservice.file.dto.response.FileWithDataDto;
+import org.springframework.web.multipart.MultipartFile;
 import ru.vsu.zhertvydedlina.aiservice.file.entity.BlueprintFile;
 
 import java.util.List;
@@ -11,14 +10,20 @@ import java.util.List;
 @Service
 public interface BlueprintFileService {
     BlueprintFile getBlueprintFileById(Long id);
-    BlueprintFile getBlueprintFileByName(String name);
 
     List<BlueprintFile> getBlueprintFilesByChatId(Long chatId);
 
-    FileWithDataDto loadBlueprintFileById(Long id);
-    FileWithDataDto loadBlueprintFileByName(String name);
+    InputStreamResource loadBlueprintFileById(Long id);
 
-    List<FileResponseDto> uploadBlueprintFile(MessageRequestDto message);
+    List<BlueprintFile> uploadBlueprintFile(List<MultipartFile> message);
 
-    FileResponseDto deleteBlueprintFile(Long id);
+    BlueprintFile deleteBlueprintFile(Long id);
+
+    List<BlueprintFile> deleteBlueprintFilesById(List<Long> filesId);
+
+    BlueprintFile deleteBlueprintFileByMessageId(Long messageId);
+
+    List<BlueprintFile> confirmBlueprintFilesById(List<Long> filesId);
+
+    boolean checkBlueprintFilesOwner(Long messageId, List<Long> filesId);
 }

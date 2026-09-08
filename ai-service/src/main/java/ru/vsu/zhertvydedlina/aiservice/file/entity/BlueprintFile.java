@@ -16,8 +16,8 @@ public class BlueprintFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "chat_id", nullable = false)
-    private Long chatId;
+    @Column(name = "message_id")
+    private Long messageId;
 
     @Column(name = "file_name", nullable = false)
     private String fileName;
@@ -33,4 +33,6 @@ public class BlueprintFile {
 
     @Column(name = "giga_chat_file_id")
     private String gigaChatFileId; //идентификаторы внешнего API обычно String, если документация API явно не гарантирует число
+
+    private Boolean confirmed; // Подтверждает, что данный файл содержится в отправленном сообщении
 }

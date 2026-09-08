@@ -2,7 +2,7 @@ package ru.vsu.zhertvydedlina.aiservice.chat.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.vsu.zhertvydedlina.aiservice.chat.entity.Chat;
+import ru.vsu.zhertvydedlina.aiservice.chat.model.entity.Chat;
 import ru.vsu.zhertvydedlina.aiservice.chat.repository.ChatRepository;
 
 import java.util.List;
@@ -29,10 +29,12 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public Long deleteChatById(long chatId) {
+    public Chat deleteChatById(long chatId) {
+        Chat chat = getChatById(chatId);
+
         chatRepository.deleteById(chatId);
 
-        return chatId;
+        return chat;
     }
 
     @Override

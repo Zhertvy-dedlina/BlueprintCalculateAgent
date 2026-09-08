@@ -1,4 +1,4 @@
-package ru.vsu.zhertvydedlina.aiservice.chat.entity;
+package ru.vsu.zhertvydedlina.aiservice.chat.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package ru.vsu.zhertvydedlina.aiservice.chat.response;
+package ru.vsu.zhertvydedlina.aiservice.chat.model.response;
 
 import lombok.Builder;
 

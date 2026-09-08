@@ -2,9 +2,10 @@ package ru.vsu.zhertvydedlina.aiservice.chat.component.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import ru.vsu.zhertvydedlina.aiservice.chat.entity.Chat;
-import ru.vsu.zhertvydedlina.aiservice.chat.response.ChatWithMessagesResponseDto;
-import ru.vsu.zhertvydedlina.aiservice.chat.response.MessageWithFileNamesResponseDto;
+import ru.vsu.zhertvydedlina.aiservice.chat.model.entity.Chat;
+import ru.vsu.zhertvydedlina.aiservice.chat.model.response.ChatResponseDto;
+import ru.vsu.zhertvydedlina.aiservice.chat.model.response.ChatWithMessagesResponseDto;
+import ru.vsu.zhertvydedlina.aiservice.chat.model.response.MessageWithFileNamesResponseDto;
 
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface ChatMapper {
             Chat chat,
             List<MessageWithFileNamesResponseDto> messageWithFileNames
     );
+
+    ChatResponseDto chatToChatResponseDto(Chat chat);
 }
