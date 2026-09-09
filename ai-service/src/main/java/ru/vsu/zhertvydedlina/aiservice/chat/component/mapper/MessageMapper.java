@@ -20,10 +20,10 @@ public interface MessageMapper {
     @Mapping(target = "fileNames", ignore = true)
     MessageWithFileNamesResponseDto messageToMessageWithFileNames(Message message);
 
-    @Mapping(target = "fileNames", source = "filesId", qualifiedByName = "filesToNames")
+    @Mapping(target = "fileNames", source = "files", qualifiedByName = "filesToNames")
     MessageWithFileNamesResponseDto messageToMessageWithFileNames(Message message, List<BlueprintFile> files);
 
-    @Mapping(target = "fileNames", source = "filesId", qualifiedByName = "filesDtoToNames")
+    @Mapping(target = "fileNames", source = "files", qualifiedByName = "filesDtoToNames")
     MessageWithFileNamesResponseDto messageAndFileDtoToMessageWithFileNames(Message message, List<FileResponseDto> files);
 
     @Mapping(target = "id", ignore = true)
@@ -32,7 +32,7 @@ public interface MessageMapper {
     Message messageRequestDtoToMessage(MessageRequestDto messageRequestDto);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "filesId", source="filesId", qualifiedByName = "filesToIds")
+    @Mapping(target = "filesId", source="files", qualifiedByName = "filesToIds")
     @Mapping(target = "timestamp", source = "messageRequestDto.timestamp", defaultExpression = "java(java.time.Instant.now())")
     Message messageRequestDtoToMessage(MessageRequestDto messageRequestDto, List<BlueprintFile> files);
 
