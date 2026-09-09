@@ -39,7 +39,6 @@ public class FileService {
 
             BlueprintFile blueprintFile = new BlueprintFile();
 
-            blueprintFile.setChatId(chatId);
             blueprintFile.setFileName(originalFileName);
             blueprintFile.setContentType(file.getContentType());
             blueprintFile.setFileSize(file.getSize());
@@ -50,7 +49,7 @@ public class FileService {
 
             return FileResponseDto.builder()
                     .id(savedFile.getId())
-                    .chatId(savedFile.getChatId())
+                    .chatId(chatId)
                     .fileName(savedFile.getFileName())
                     .contentType(savedFile.getContentType())
                     .fileSize(savedFile.getFileSize())
