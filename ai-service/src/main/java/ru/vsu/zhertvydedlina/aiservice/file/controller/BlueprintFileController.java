@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.vsu.zhertvydedlina.aiservice.common.exception.ForbiddenException;
 import ru.vsu.zhertvydedlina.aiservice.file.dto.response.BlueprintFileResponseDto;
 import ru.vsu.zhertvydedlina.aiservice.file.entity.BlueprintFile;
 import ru.vsu.zhertvydedlina.aiservice.file.service.BlueprintFileService;
@@ -48,7 +48,7 @@ public class BlueprintFileController {
             @PathVariable Long id
     ) {
         if (!blueprintFileService.checkBlueprintFileOwner(id, user.getId())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            throw new ForbiddenException("Данный файл не принадлежит пользователю или не существует");
         }
 
         BlueprintFile file = blueprintFileService.getBlueprintFileById(id);

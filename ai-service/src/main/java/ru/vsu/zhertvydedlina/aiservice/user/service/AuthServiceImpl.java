@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import ru.vsu.zhertvydedlina.aiservice.common.exception.ConflictException;
 import ru.vsu.zhertvydedlina.aiservice.common.exception.NotFoundException;
 import ru.vsu.zhertvydedlina.aiservice.user.component.mapper.UserMapper;
 import ru.vsu.zhertvydedlina.aiservice.user.model.entity.User;
@@ -25,18 +26,13 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     @Override
     public String register(RegisterRequestDto registerDto) {
         if (userService.existsByEmail(registerDto.email())) {
-            throw new IllegalArgumentException("User with this email already exists");
+            throw new ConflictException("User with this email already exists");
         } else if (userService.existsByUsername(registerDto.username())) {
-            throw new IllegalArgumentException("User with username already exists");
+            throw new ConflictException("User with username already exists");
         }
 
         User user = userMapper.registerDtoToUser(registerDto);
-
         User newUser = userService.saveUser(user);
-
-        if (newUser == null) {
-            throw new IllegalArgumentException("Server error");
-        }
 
         return jwtService.generateToken(newUser);
     }

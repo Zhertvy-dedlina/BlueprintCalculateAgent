@@ -2,6 +2,7 @@ package ru.vsu.zhertvydedlina.aiservice.file.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.vsu.zhertvydedlina.aiservice.common.exception.BadRequestException;
 
 import java.util.Set;
 //для проверки расширения
@@ -20,11 +21,11 @@ public class FileValidationService {
     public void validate(MultipartFile file) {
 
         if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("File is empty");
+            throw new BadRequestException("File is empty");
         }
 
         if (file.getSize() > MAX_FILE_SIZE) {
-            throw new IllegalArgumentException(
+            throw new BadRequestException(
                     "File size exceeds 50 MB"
             );
         }
@@ -32,7 +33,7 @@ public class FileValidationService {
         String extension = getExtension(file.getOriginalFilename());
 
         if (!ALLOWED_EXTENSIONS.contains(extension)) {
-            throw new IllegalArgumentException(
+            throw new BadRequestException(
                     "Unsupported file format: " + extension
             );
         }

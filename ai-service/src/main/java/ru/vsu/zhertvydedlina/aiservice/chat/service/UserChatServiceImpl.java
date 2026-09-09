@@ -11,6 +11,7 @@ import ru.vsu.zhertvydedlina.aiservice.chat.model.response.ChatWithMessagesRespo
 import ru.vsu.zhertvydedlina.aiservice.chat.model.response.MessageWithFileNamesResponseDto;
 import ru.vsu.zhertvydedlina.aiservice.chat.model.entity.Chat;
 import ru.vsu.zhertvydedlina.aiservice.chat.model.entity.Message;
+import ru.vsu.zhertvydedlina.aiservice.common.exception.BadRequestException;
 import ru.vsu.zhertvydedlina.aiservice.file.dto.response.FileResponseDto;
 import ru.vsu.zhertvydedlina.aiservice.file.entity.BlueprintFile;
 import ru.vsu.zhertvydedlina.aiservice.file.service.BlueprintFileService;
@@ -53,13 +54,13 @@ public class UserChatServiceImpl implements UserChatService {
     @Override
     public ChatWithMessagesResponseDto getChatMessages(Long chatId, int page, int size) {
         if (chatId == null) {
-            throw new IllegalArgumentException("chatId cannot be null");
+            throw new BadRequestException("chatId cannot be null");
         }
 
         Chat chat = chatService.getChatById(chatId);
 
         if (page <= 0 || size <= 0) {
-            throw new IllegalArgumentException("page or size cannot be negative");
+            throw new BadRequestException("page or size cannot be negative");
         }
 
         List<Message> chatMessages = messageService.getMessagesByChatId(
@@ -81,7 +82,7 @@ public class UserChatServiceImpl implements UserChatService {
     @Transactional
     public ChatWithMessagesResponseDto createChatFromFirstMessage(MessageRequestDto message) {
         if (message.userId() == null) {
-            throw new IllegalArgumentException("message userId cannot be null");
+            throw new BadRequestException("message userId cannot be null");
         }
 
         Chat chat = chatService.saveChat(new Chat(null, message.userId()));

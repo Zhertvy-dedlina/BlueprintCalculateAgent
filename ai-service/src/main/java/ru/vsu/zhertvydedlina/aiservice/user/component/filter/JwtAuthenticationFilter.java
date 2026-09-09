@@ -46,16 +46,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        Long userId = jwtService.extractUserId(jwt);
+        User user;
 
-        if (userId == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        try {
+            Long userId = jwtService.extractUserId(jwt);
 
-        User user = userService.getUser(userId);
+            if (userId == null) {
+                filterChain.doFilter(request, response);
+                return;
+            }
 
-        if (user == null) {
+            user = userService.getUser(userId);
+        } catch (RuntimeException e) {
             filterChain.doFilter(request, response);
             return;
         }

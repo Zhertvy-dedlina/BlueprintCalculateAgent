@@ -2,6 +2,7 @@ package ru.vsu.zhertvydedlina.aiservice.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.vsu.zhertvydedlina.aiservice.common.exception.ConflictException;
 import ru.vsu.zhertvydedlina.aiservice.common.exception.NotFoundException;
 import ru.vsu.zhertvydedlina.aiservice.user.component.mapper.UserMapper;
 import ru.vsu.zhertvydedlina.aiservice.user.model.entity.User;
@@ -42,7 +43,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User saveUser(User user) {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            throw new IllegalArgumentException("User with username" + user.getUsername() + " already exists");
+            throw new ConflictException("User with username " + user.getUsername() + " already exists");
         }
 
         return userRepository.save(user);

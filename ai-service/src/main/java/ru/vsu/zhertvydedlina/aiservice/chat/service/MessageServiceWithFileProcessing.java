@@ -8,6 +8,7 @@ import ru.vsu.zhertvydedlina.aiservice.chat.component.mapper.MessageMapper;
 import ru.vsu.zhertvydedlina.aiservice.chat.model.entity.Message;
 import ru.vsu.zhertvydedlina.aiservice.chat.model.request.MessageRequestDto;
 import ru.vsu.zhertvydedlina.aiservice.chat.model.request.MessageUpdateRequestDto;
+import ru.vsu.zhertvydedlina.aiservice.common.exception.ForbiddenException;
 import ru.vsu.zhertvydedlina.aiservice.file.service.BlueprintFileService;
 
 import java.util.List;
@@ -52,7 +53,7 @@ public class MessageServiceWithFileProcessing implements MessageService {
 
         // Проверка, что файлы принадлежат данному сообщению
         if (!blueprintFileService.checkBlueprintFilesOwner(message.id(), newFilesId)) {
-            throw new IllegalArgumentException("Files are not owned by this message");
+            throw new ForbiddenException("Files are not owned by this message");
         }
 
         // Берем все файлы, которые были удалены при изменении сообщения

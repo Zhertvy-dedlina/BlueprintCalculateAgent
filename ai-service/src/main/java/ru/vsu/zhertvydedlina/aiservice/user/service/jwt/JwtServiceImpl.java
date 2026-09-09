@@ -6,6 +6,7 @@ import io.jsonwebtoken.JwtParser;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.vsu.zhertvydedlina.aiservice.common.exception.UnauthorizedException;
 import ru.vsu.zhertvydedlina.aiservice.user.model.entity.User;
 import ru.vsu.zhertvydedlina.aiservice.user.service.UserService;
 
@@ -40,7 +41,7 @@ public class JwtServiceImpl implements JwtService {
         try {
             userId = Long.parseLong(parsedUserId);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("jwt token contains invalid user id");
+            throw new UnauthorizedException("jwt token contains invalid user id");
         }
 
         return userId;
@@ -61,7 +62,7 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String refreshToken(String refreshToken) {
         if (!isValid(refreshToken)) {
-            throw new IllegalArgumentException("refresh token is invalid");
+            throw new UnauthorizedException("refresh token is invalid");
         }
 
         Long userId = extractUserId(refreshToken);

@@ -2,7 +2,6 @@ package ru.vsu.zhertvydedlina.aiservice.chat.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -11,6 +10,7 @@ import ru.vsu.zhertvydedlina.aiservice.chat.component.mapper.MessageMapper;
 import ru.vsu.zhertvydedlina.aiservice.chat.model.request.MessageUpdateRequestDto;
 import ru.vsu.zhertvydedlina.aiservice.chat.model.response.MessageResponseDto;
 import ru.vsu.zhertvydedlina.aiservice.chat.service.MessageService;
+import ru.vsu.zhertvydedlina.aiservice.common.exception.ForbiddenException;
 import ru.vsu.zhertvydedlina.aiservice.user.model.entity.User;
 
 @Controller
@@ -18,6 +18,8 @@ import ru.vsu.zhertvydedlina.aiservice.user.model.entity.User;
 @RequestMapping("/api/message")
 @RequiredArgsConstructor
 public class MessageController {
+    private static final String MESSAGE_NOT_OWNED = "Данное сообщение не принадлежит пользователю или не существует";
+
     @Qualifier("messageServiceWithFileProcessing")
     private final MessageService messageService;
 
@@ -28,9 +30,7 @@ public class MessageController {
             @AuthenticationPrincipal User user,
             @RequestParam("id") Long id
     ) {
-        if (!messageService.checkMessageOwner(id, user.getId())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+        requireMessageOwner(id, user.getId());
 
         return ResponseEntity.ok(messageMapper.messageToMessageResponseDto(messageService.getMessageById(id)));
     }
@@ -41,9 +41,7 @@ public class MessageController {
             @PathVariable Long id,
             @RequestBody MessageUpdateRequestDto message
     ) {
-        if (!messageService.checkMessageOwner(id, user.getId())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+        requireMessageOwner(id, user.getId());
 
         return ResponseEntity.ok(messageMapper.messageToMessageResponseDto(messageService.updateMessage(message)));
     }
@@ -53,10 +51,14 @@ public class MessageController {
             @AuthenticationPrincipal User user,
             @PathVariable Long id
     ) {
-        if (!messageService.checkMessageOwner(id, user.getId())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+        requireMessageOwner(id, user.getId());
 
         return ResponseEntity.ok(messageMapper.messageToMessageResponseDto(messageService.deleteMessage(id)));
+    }
+
+    private void requireMessageOwner(Long id, Long userId) {
+        if (!messageService.checkMessageOwner(id, userId)) {
+            throw new ForbiddenException(MESSAGE_NOT_OWNED);
+        }
     }
 }
