@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.vsu.zhertvydedlina.aiservice.user.entity.User;
-import ru.vsu.zhertvydedlina.aiservice.user.request.AuthRequestDto;
-import ru.vsu.zhertvydedlina.aiservice.user.request.RegisterRequestDto;
+import ru.vsu.zhertvydedlina.aiservice.user.model.entity.User;
+import ru.vsu.zhertvydedlina.aiservice.user.model.request.AuthRequestDto;
+import ru.vsu.zhertvydedlina.aiservice.user.model.request.RegisterRequestDto;
 import ru.vsu.zhertvydedlina.aiservice.user.service.AuthService;
 import ru.vsu.zhertvydedlina.aiservice.user.service.jwt.JwtService;
 

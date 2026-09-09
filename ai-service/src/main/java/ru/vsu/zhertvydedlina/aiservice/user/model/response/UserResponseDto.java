@@ -1,4 +1,4 @@
-package ru.vsu.zhertvydedlina.aiservice.user.response;
+package ru.vsu.zhertvydedlina.aiservice.user.model.response;
 
 import lombok.Builder;
 

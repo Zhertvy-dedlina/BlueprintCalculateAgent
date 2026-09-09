@@ -10,7 +10,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.vsu.zhertvydedlina.aiservice.user.entity.User;
+import ru.vsu.zhertvydedlina.aiservice.user.model.entity.User;
 import ru.vsu.zhertvydedlina.aiservice.user.service.UserService;
 import ru.vsu.zhertvydedlina.aiservice.user.service.jwt.JwtService;
 

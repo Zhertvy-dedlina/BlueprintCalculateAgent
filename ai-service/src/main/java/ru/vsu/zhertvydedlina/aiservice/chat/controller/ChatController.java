@@ -13,7 +13,7 @@ import ru.vsu.zhertvydedlina.aiservice.chat.component.mapper.MessageMapper;
 import ru.vsu.zhertvydedlina.aiservice.chat.model.response.ChatWithMessagesResponseDto;
 import ru.vsu.zhertvydedlina.aiservice.chat.service.UserChatService;
 import ru.vsu.zhertvydedlina.aiservice.common.response.ErrorResponseDto;
-import ru.vsu.zhertvydedlina.aiservice.user.entity.User;
+import ru.vsu.zhertvydedlina.aiservice.user.model.entity.User;
 
 import java.util.Objects;
 

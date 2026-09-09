@@ -1,4 +1,4 @@
-package ru.vsu.zhertvydedlina.aiservice.user.entity;
+package ru.vsu.zhertvydedlina.aiservice.user.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.vsu.zhertvydedlina.aiservice.file.dto.response.BlueprintFileResponseDto;
 import ru.vsu.zhertvydedlina.aiservice.file.entity.BlueprintFile;
 import ru.vsu.zhertvydedlina.aiservice.file.service.BlueprintFileService;
-import ru.vsu.zhertvydedlina.aiservice.user.entity.User;
+import ru.vsu.zhertvydedlina.aiservice.user.model.entity.User;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;

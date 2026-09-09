@@ -9,6 +9,7 @@ import ru.vsu.zhertvydedlina.aiservice.chat.component.mapper.MessageMapper;
 import ru.vsu.zhertvydedlina.aiservice.chat.model.entity.Message;
 import ru.vsu.zhertvydedlina.aiservice.chat.model.request.MessageUpdateRequestDto;
 import ru.vsu.zhertvydedlina.aiservice.chat.repository.MessageRepository;
+import ru.vsu.zhertvydedlina.aiservice.common.exception.NotFoundException;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Message getMessageById(long id) {
         return messageRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Message with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException("Message with id " + id + " not found"));
     }
 
     @Override
@@ -38,7 +39,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Message updateMessage(MessageUpdateRequestDto message) {
         Message oldMessage = messageRepository.findById(message.id()).orElseThrow(
-                () -> new IllegalArgumentException("Message with id " + message.id() + " not found")
+                () -> new NotFoundException("Message with id " + message.id() + " not found")
         );
 
         return messageRepository.save(messageMapper.updateMessage(oldMessage, message.message(), message.filesId()));

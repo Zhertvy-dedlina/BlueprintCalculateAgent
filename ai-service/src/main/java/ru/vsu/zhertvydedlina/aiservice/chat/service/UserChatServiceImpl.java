@@ -64,7 +64,7 @@ public class UserChatServiceImpl implements UserChatService {
 
         List<Message> chatMessages = messageService.getMessagesByChatId(
                 chatId,
-                PageRequest.of(page, size)
+                PageRequest.of(page - 1, size)
         );
 
         List<BlueprintFile> blueprints = blueprintFileService.getBlueprintFilesByChatId(chatId);

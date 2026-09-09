@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.vsu.zhertvydedlina.aiservice.chat.repository.MessageRepository;
+import ru.vsu.zhertvydedlina.aiservice.common.exception.NotFoundException;
 import ru.vsu.zhertvydedlina.aiservice.file.entity.BlueprintFile;
 import ru.vsu.zhertvydedlina.aiservice.file.repository.BlueprintFileRepository;
 import ru.vsu.zhertvydedlina.aiservice.file.service.storage.FileStorageService;
@@ -26,7 +27,7 @@ public class BlueprintFileServiceImpl implements BlueprintFileService {
     @Override
     public BlueprintFile getBlueprintFileById(Long id) {
         return blueprintFileRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Blueprint file with id " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException("Blueprint file with id " + id + " not found"));
     }
 
     @Override

@@ -2,7 +2,7 @@ package ru.vsu.zhertvydedlina.aiservice.user.service.jwt;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
-import ru.vsu.zhertvydedlina.aiservice.user.entity.User;
+import ru.vsu.zhertvydedlina.aiservice.user.model.entity.User;
 
 @Service
 public interface JwtService {

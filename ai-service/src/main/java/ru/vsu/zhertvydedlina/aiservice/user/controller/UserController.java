@@ -6,8 +6,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.zhertvydedlina.aiservice.user.component.mapper.UserMapper;
-import ru.vsu.zhertvydedlina.aiservice.user.entity.User;
-import ru.vsu.zhertvydedlina.aiservice.user.response.UserResponseDto;
+import ru.vsu.zhertvydedlina.aiservice.user.model.entity.User;
+import ru.vsu.zhertvydedlina.aiservice.user.model.request.UserUpdateRequestDto;
+import ru.vsu.zhertvydedlina.aiservice.user.model.response.UserResponseDto;
 import ru.vsu.zhertvydedlina.aiservice.user.service.UserService;
 
 @Controller
@@ -25,10 +26,11 @@ public class UserController {
     }
 
     @PutMapping("/profile/update")
-    public ResponseEntity<UserResponseDto> updateUser(@AuthenticationPrincipal User tokenUser, @RequestBody User newUser) {
-        newUser.setId(tokenUser.getId());
-
-        return ResponseEntity.ok(userMapper.userToUserResponseDto(userService.updateUser(newUser)));
+    public ResponseEntity<UserResponseDto> updateUser(
+            @AuthenticationPrincipal User tokenUser,
+            @RequestBody UserUpdateRequestDto update
+    ) {
+        return ResponseEntity.ok(userMapper.userToUserResponseDto(userService.updateUser(tokenUser.getId(), update)));
     }
 
     @DeleteMapping("/profile/delete")

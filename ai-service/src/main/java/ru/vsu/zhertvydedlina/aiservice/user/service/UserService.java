@@ -1,7 +1,8 @@
 package ru.vsu.zhertvydedlina.aiservice.user.service;
 
 import org.springframework.stereotype.Service;
-import ru.vsu.zhertvydedlina.aiservice.user.entity.User;
+import ru.vsu.zhertvydedlina.aiservice.user.model.entity.User;
+import ru.vsu.zhertvydedlina.aiservice.user.model.request.UserUpdateRequestDto;
 
 @Service
 public interface UserService {
@@ -15,7 +16,7 @@ public interface UserService {
 
     User saveUser(User user);
 
-    User updateUser(User user);
+    User updateUser(Long userId, UserUpdateRequestDto update);
 
     User deleteUser(Long userId);
 

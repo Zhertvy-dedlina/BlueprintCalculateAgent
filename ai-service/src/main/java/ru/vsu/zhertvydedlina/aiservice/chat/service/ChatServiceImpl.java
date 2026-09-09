@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.vsu.zhertvydedlina.aiservice.chat.model.entity.Chat;
 import ru.vsu.zhertvydedlina.aiservice.chat.repository.ChatRepository;
+import ru.vsu.zhertvydedlina.aiservice.common.exception.NotFoundException;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public Chat getChatById(long chatId) {
         return chatRepository.findById(chatId)
-                .orElseThrow(() -> new IllegalArgumentException("chat with id: " + chatId + "doesn't exist"));
+                .orElseThrow(() -> new NotFoundException("chat with id: " + chatId + " doesn't exist"));
     }
 
     @Override

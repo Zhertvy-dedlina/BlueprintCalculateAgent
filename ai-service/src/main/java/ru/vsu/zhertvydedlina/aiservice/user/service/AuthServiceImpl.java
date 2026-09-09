@@ -6,9 +6,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import ru.vsu.zhertvydedlina.aiservice.common.exception.NotFoundException;
 import ru.vsu.zhertvydedlina.aiservice.user.component.mapper.UserMapper;
-import ru.vsu.zhertvydedlina.aiservice.user.entity.User;
-import ru.vsu.zhertvydedlina.aiservice.user.request.RegisterRequestDto;
+import ru.vsu.zhertvydedlina.aiservice.user.model.entity.User;
+import ru.vsu.zhertvydedlina.aiservice.user.model.request.RegisterRequestDto;
 import ru.vsu.zhertvydedlina.aiservice.user.service.jwt.JwtService;
 
 @Service
@@ -43,12 +44,10 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     @NotNull
     @Override
     public UserDetails loadUserByUsername(@NotNull String username) throws UsernameNotFoundException {
-        User user = userService.getUserByUsernameOrEmail(username);
-
-        if (user == null) {
+        try {
+            return userService.getUserByUsernameOrEmail(username);
+        } catch (NotFoundException e) {
             throw new UsernameNotFoundException(username);
         }
-
-        return user;
     }
 }

@@ -2,39 +2,41 @@ package ru.vsu.zhertvydedlina.aiservice.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.vsu.zhertvydedlina.aiservice.user.entity.User;
+import ru.vsu.zhertvydedlina.aiservice.common.exception.NotFoundException;
+import ru.vsu.zhertvydedlina.aiservice.user.component.mapper.UserMapper;
+import ru.vsu.zhertvydedlina.aiservice.user.model.entity.User;
+import ru.vsu.zhertvydedlina.aiservice.user.model.request.UserUpdateRequestDto;
 import ru.vsu.zhertvydedlina.aiservice.user.repository.UserRepository;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
 
     @Override
     public User getUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User with id" + userId + " not found"));
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
     }
 
     @Override
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User with email" + email + " not found"));
+                .orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
     }
 
     @Override
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User with username" + username + " not found"));
+                .orElseThrow(() -> new NotFoundException("User with username " + username + " not found"));
     }
 
     @Override
     public User getUserByUsernameOrEmail(String usernameOrEmail) {
         return userRepository.findByUsernameOrEmail(usernameOrEmail)
-                .orElseThrow(() -> new IllegalArgumentException("User with usernameOrEmail" + usernameOrEmail + " not found"));
+                .orElseThrow(() -> new NotFoundException("User with usernameOrEmail " + usernameOrEmail + " not found"));
     }
 
     @Override
@@ -47,10 +49,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(User user) {
-        if (userRepository.findById(user.getId()).isEmpty()) {
-            throw new IllegalArgumentException("User with id" + user.getId() + " not found");
-        }
+    public User updateUser(Long userId, UserUpdateRequestDto update) {
+        User user = getUser(userId);
+
+        userMapper.updateUserFromDto(update, user);
 
         return userRepository.save(user);
     }
@@ -58,10 +60,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User deleteUser(Long userId) {
         User user = getUser(userId);
-
-        if (user == null) {
-            throw new IllegalArgumentException("User with id" + userId + " not found");
-        }
 
         userRepository.delete(user);
 

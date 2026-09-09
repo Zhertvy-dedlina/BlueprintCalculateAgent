@@ -11,7 +11,7 @@ import ru.vsu.zhertvydedlina.aiservice.chat.component.mapper.MessageMapper;
 import ru.vsu.zhertvydedlina.aiservice.chat.model.request.MessageUpdateRequestDto;
 import ru.vsu.zhertvydedlina.aiservice.chat.model.response.MessageResponseDto;
 import ru.vsu.zhertvydedlina.aiservice.chat.service.MessageService;
-import ru.vsu.zhertvydedlina.aiservice.user.entity.User;
+import ru.vsu.zhertvydedlina.aiservice.user.model.entity.User;
 
 @Controller
 @RestController

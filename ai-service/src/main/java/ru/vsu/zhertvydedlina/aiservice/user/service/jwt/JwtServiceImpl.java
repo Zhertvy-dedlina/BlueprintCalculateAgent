@@ -6,8 +6,7 @@ import io.jsonwebtoken.JwtParser;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.vsu.zhertvydedlina.aiservice.user.component.JwtComponent;
-import ru.vsu.zhertvydedlina.aiservice.user.entity.User;
+import ru.vsu.zhertvydedlina.aiservice.user.model.entity.User;
 import ru.vsu.zhertvydedlina.aiservice.user.service.UserService;
 
 import java.util.Date;
