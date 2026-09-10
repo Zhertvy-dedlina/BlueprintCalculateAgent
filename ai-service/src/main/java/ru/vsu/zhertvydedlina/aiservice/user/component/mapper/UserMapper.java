@@ -11,11 +11,15 @@ import ru.vsu.zhertvydedlina.aiservice.user.model.response.UserResponseDto;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "authorities", ignore = true)
     User registerDtoToUser(RegisterRequestDto registerRequestDto);
 
     UserResponseDto userToUserResponseDto(User user);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "username", source="dto.username")
+    @Mapping(target = "email", source = "dto.email")
     @Mapping(target = "password", ignore = true)
-    void updateUserFromDto(UserUpdateRequestDto dto, @MappingTarget User user);
+    @Mapping(target = "authorities", ignore = true)
+    void updateUserFromDto(@MappingTarget User user, UserUpdateRequestDto dto);
 }

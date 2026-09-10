@@ -61,10 +61,7 @@ public class BlueprintFileServiceImpl implements BlueprintFileService {
         fileValidationService.validate(file);
 
         String originalFileName = file.getOriginalFilename();
-        String storageKey =
-                "users/" + userId +
-                        "/blueprints/" + UUID.randomUUID() +
-                        "/" + originalFileName;
+        String storageKey = "users/%d/blueprints/%s/%s".formatted(userId, UUID.randomUUID(), originalFileName);
 
         fileStorageService.save(file, storageKey);
 

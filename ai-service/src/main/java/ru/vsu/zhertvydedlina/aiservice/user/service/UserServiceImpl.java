@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
     public User updateUser(Long userId, UserUpdateRequestDto update) {
         User user = getUser(userId);
 
-        userMapper.updateUserFromDto(update, user);
+        userMapper.updateUserFromDto(user, update);
 
         return userRepository.save(user);
     }
