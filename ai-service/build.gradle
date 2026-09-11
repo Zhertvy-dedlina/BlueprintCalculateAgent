@@ -20,7 +20,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom "org.testcontainers:testcontainers-bom:1.20.4"
+        mavenBom "org.testcontainers:testcontainers-bom:1.21.3"
     }
 }
 
@@ -57,8 +57,10 @@ dependencies {
     testImplementation 'org.testcontainers:postgresql'
     testImplementation 'org.testcontainers:minio'
     testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'com.h2database:h2'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+    environment 'GIGA_AUTH_KEY', System.getenv('GIGA_AUTH_KEY') ?: 'test-auth-key'
 }

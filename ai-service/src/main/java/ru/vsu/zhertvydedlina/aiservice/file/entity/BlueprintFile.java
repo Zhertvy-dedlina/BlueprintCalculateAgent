@@ -19,9 +19,6 @@ public class BlueprintFile {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "message_id")
-    private Long messageId;
-
     @Column(name = "file_name", nullable = false)
     private String fileName;
 

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.vsu.zhertvydedlina.aiservice.chat.model.entity.Message;
 import ru.vsu.zhertvydedlina.aiservice.chat.repository.MessageRepository;
 import ru.vsu.zhertvydedlina.aiservice.common.exception.NotFoundException;
 import ru.vsu.zhertvydedlina.aiservice.file.entity.BlueprintFile;
@@ -112,7 +113,15 @@ public class BlueprintFileServiceImpl implements BlueprintFileService {
     @Override
     @Transactional
     public BlueprintFile deleteBlueprintFileByMessageId(Long messageId) {
-        List<BlueprintFile> files = blueprintFileRepository.findAllByMessageId(messageId);
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new NotFoundException("Message with id " + messageId + " not found"));
+
+        List<Long> filesId = message.getFilesId();
+        if (filesId == null || filesId.isEmpty()) {
+            return null;
+        }
+
+        List<BlueprintFile> files = blueprintFileRepository.findAllByIdIn(filesId);
         files.forEach(file -> fileStorageService.delete(file.getStorageKey()));
         blueprintFileRepository.deleteAll(files);
 
@@ -130,15 +139,6 @@ public class BlueprintFileServiceImpl implements BlueprintFileService {
         files.forEach(file -> file.setConfirmed(true));
 
         return blueprintFileRepository.saveAll(files);
-    }
-
-    @Override
-    public boolean checkBlueprintFilesOwner(Long messageId, List<Long> filesId) {
-        if (filesId == null || filesId.isEmpty()) {
-            return true;
-        }
-
-        return blueprintFileRepository.countByIdInAndMessageId(filesId, messageId) == filesId.size();
     }
 
     @Override

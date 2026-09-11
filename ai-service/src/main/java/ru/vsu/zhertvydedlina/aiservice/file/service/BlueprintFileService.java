@@ -23,7 +23,5 @@ public interface BlueprintFileService {
 
     List<BlueprintFile> confirmBlueprintFilesById(List<Long> filesId);
 
-    boolean checkBlueprintFilesOwner(Long messageId, List<Long> filesId);
-
     boolean checkBlueprintFileOwner(Long fileId, Long userId);
 }

@@ -137,22 +137,6 @@ public class BlueprintFileServiceTest {
     }
 
     @Test
-    @DisplayName("Проверка владельца файлов сообщения")
-    void shouldCheckBlueprintFilesOwner() {
-        when(blueprintFileRepository.countByIdInAndMessageId(List.of(1L, 2L), 5L)).thenReturn(2L);
-
-        Assertions.assertTrue(blueprintFileService.checkBlueprintFilesOwner(5L, List.of(1L, 2L)));
-        verify(blueprintFileRepository, times(1)).countByIdInAndMessageId(List.of(1L, 2L), 5L);
-    }
-
-    @Test
-    @DisplayName("Проверка владельца файлов при пустом списке id возвращает true")
-    void shouldReturnTrueWhenCheckingOwnerWithEmptyIds() {
-        Assertions.assertTrue(blueprintFileService.checkBlueprintFilesOwner(5L, List.of()));
-        verifyNoInteractions(blueprintFileRepository);
-    }
-
-    @Test
     @DisplayName("Проверка владельца файла")
     void shouldCheckBlueprintFileOwner() {
         when(blueprintFileRepository.existsByIdAndUserId(1L, 10L)).thenReturn(true);

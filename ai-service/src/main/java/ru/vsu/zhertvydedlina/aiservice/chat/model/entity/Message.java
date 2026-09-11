@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Table(
         name="messages",
-        indexes = {@Index(name = "idx_message_id_order", columnList="(chat_id, id)")}
+        indexes = {@Index(name = "idx_message_id_order", columnList="chat_id, id")}
 )
 public class Message {
     @Id

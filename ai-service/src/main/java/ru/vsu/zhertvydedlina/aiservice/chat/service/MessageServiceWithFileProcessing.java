@@ -51,9 +51,12 @@ public class MessageServiceWithFileProcessing implements MessageService {
         List<Long> newFilesId = message.filesId();
         List<Long> oldFilesId = oldMessage.getFilesId();
 
-        // Проверка, что файлы принадлежат данному сообщению
-        if (!blueprintFileService.checkBlueprintFilesOwner(message.id(), newFilesId)) {
-            throw new ForbiddenException("Files are not owned by this message");
+        // Проверка, что файлы принадлежат пользователю - владельцу сообщения
+        boolean allFilesOwnedByUser = newFilesId == null || newFilesId.stream()
+                .allMatch(fileId -> blueprintFileService.checkBlueprintFileOwner(fileId, oldMessage.getUserId()));
+
+        if (!allFilesOwnedByUser) {
+            throw new ForbiddenException("Files are not owned by this user");
         }
 
         // Берем все файлы, которые были удалены при изменении сообщения
