@@ -4,13 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellAddress;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import ru.vsu.zhertvydedlina.aiservice.calculation.request.CalculationResult;
 import ru.vsu.zhertvydedlina.aiservice.ai.dto.response.ExtractedParametersDto;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
 
 @Slf4j
 @Service
@@ -23,19 +23,9 @@ public class ExcelCommercialOfferService {
             ExtractedParametersDto params,
             CalculationResult result) {
 
-        File template =
-                new File(templatePath);
-
-        if (!template.exists()) {
-            throw new IllegalStateException(
-                    "Excel-шаблон не найден: "
-                            + template.getAbsolutePath()
-            );
-        }
-
         try (
-                FileInputStream input =
-                        new FileInputStream(template);
+                InputStream input =
+                        new ClassPathResource(templatePath).getInputStream();
 
                 Workbook workbook =
                         WorkbookFactory.create(input);

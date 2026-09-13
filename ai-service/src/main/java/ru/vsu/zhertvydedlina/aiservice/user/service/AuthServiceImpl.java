@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.vsu.zhertvydedlina.aiservice.common.exception.ConflictException;
 import ru.vsu.zhertvydedlina.aiservice.common.exception.NotFoundException;
@@ -23,6 +24,8 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 
     public final UserMapper userMapper;
 
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     @Override
     public String register(RegisterRequestDto registerDto) {
         if (userService.existsByEmail(registerDto.email())) {
@@ -32,6 +35,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         }
 
         User user = userMapper.registerDtoToUser(registerDto);
+        user.setPassword(passwordEncoder.encode(registerDto.password()));
         User newUser = userService.saveUser(user);
 
         return jwtService.generateToken(newUser);
