@@ -1,6 +1,6 @@
+import { AuthError } from './authService';
 import type { ChatFile, ChatSettings } from '../types/chat';
 
-/** Ping the backend health endpoint or server to check availability. */
 export async function checkBackendHealth(apiUrl: string): Promise<boolean> {
   const trimmed = apiUrl.trim();
   if (!trimmed) return false;
@@ -31,13 +31,10 @@ export async function checkBackendHealth(apiUrl: string): Promise<boolean> {
           return true;
         }
       } catch {
-        // Continue trying next endpoint or fallback
+        // try next
       }
     }
 
-    // Fallback: no-cors ping directly to the endpoint.
-    // If the server port is listening, it succeeds with an opaque response.
-    // If the server is offline/down, it throws a TypeError (connection refused).
     try {
       await fetch(trimmed, {
         method: 'GET',
@@ -57,41 +54,52 @@ export async function checkBackendHealth(apiUrl: string): Promise<boolean> {
 export async function sendMessageToAgent(
   userText: string,
   files: ChatFile[] = [],
-  settings: ChatSettings
+  settings: ChatSettings,
+  token: string
 ): Promise<string> {
-  // Always attempt a real request if apiUrl is set
-  if (settings.apiUrl.trim()) {
-    try {
-      const formData = new FormData();
-      formData.append('message', userText);
-      for (const file of files) {
-        if (file.rawFile) {
-          formData.append('files', file.rawFile, file.name);
-        }
-      }
+  if (!settings.apiUrl.trim()) {
+    await new Promise((resolve) => setTimeout(resolve, 800 + Math.random() * 700));
+    return getMockAgentResponse(userText, files);
+  }
 
-      const response = await fetch(settings.apiUrl, {
-        method: 'POST',
-        body: files.length > 0 ? formData : JSON.stringify({ message: userText }),
-        headers: files.length > 0 ? {} : { 'Content-Type': 'application/json' },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data.reply || data.message || data.text || JSON.stringify(data);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      console.warn('API бэкенда недоступен, используется локальный ответ:', errorMessage);
-      return `${getMockAgentResponse(userText, files)}\n\n*(Примечание: Ответ сгенерирован локально, так как бэкенд недоступен: ${errorMessage})*`;
+  const formData = new FormData();
+  formData.append('text', userText);
+  for (const file of files) {
+    if (file.rawFile) {
+      formData.append('files', file.rawFile, file.name);
     }
   }
 
-  // No API URL configured — use mock with a small delay
-  await new Promise((resolve) => setTimeout(resolve, 800 + Math.random() * 700));
-  return getMockAgentResponse(userText, files);
+  const response = await fetch(settings.apiUrl, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+
+  if (response.status === 401) {
+    throw new AuthError('Сессия истекла. Пожалуйста, войдите снова.');
+  }
+
+  if (!response.ok) {
+    throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
+  }
+
+  const contentType = response.headers.get('Content-Type') ?? '';
+  if (contentType.includes('application/octet-stream')) {
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'kommercheskoe_predlozhenie.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    return 'Расчёт выполнен. Коммерческое предложение сформировано и загружено на ваш компьютер.';
+  }
+
+  const data = await response.json();
+  return data.message || data.reply || data.text || JSON.stringify(data);
 }
 
 function getMockAgentResponse(prompt: string, files: ChatFile[]): string {

@@ -6,11 +6,13 @@ import { ChatMessage } from './components/ChatMessage';
 import { ChatInput } from './components/ChatInput';
 import { QuickPrompts } from './components/QuickPrompts';
 import { SettingsModal } from './components/SettingsModal';
+import { AuthModal } from './components/AuthModal';
 import { sendMessageToAgent, checkBackendHealth } from './services/chatService';
+import { getToken, saveToken, clearToken, AuthError } from './services/authService';
 import './App.css';
 
 const INITIAL_SETTINGS: ChatSettings = {
-  apiUrl: 'http://localhost:8080/api/chat',
+  apiUrl: '/api/ai/analyze',
 };
 
 const getWelcomeMessage = (): Message => ({
@@ -33,15 +35,23 @@ const createNewSession = (title = 'Новый чат'): ChatSession => {
   };
 };
 
+function getApiBaseUrl(apiUrl: string): string {
+  try {
+    return new URL(apiUrl).origin;
+  } catch {
+    return window.location.origin;
+  }
+}
+
 function App() {
-  // Initialize sessions with migration from old localStorage if available
+  const [token, setToken] = useState<string | null>(() => getToken());
+
   const [sessions, setSessions] = useState<ChatSession[]>(() => {
     const savedSessions = localStorage.getItem('chat_sessions');
     if (savedSessions) {
       try {
         const parsed = JSON.parse(savedSessions);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Patch old sessions that may lack createdAtMs
           return parsed.map((s: ChatSession) => ({
             ...s,
             createdAtMs: s.createdAtMs ?? Date.now(),
@@ -52,7 +62,6 @@ function App() {
       }
     }
 
-    // Migration from old single-chat storage
     const oldMessages = localStorage.getItem('chat_messages');
     if (oldMessages) {
       try {
@@ -99,10 +108,8 @@ function App() {
   const [isOnline, setIsOnline] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Ensure activeSessionId points to a valid session
   const activeSession = sessions.find((s) => s.id === activeSessionId) || sessions[0];
 
-  // Ping the backend on mount and every 10 seconds
   useEffect(() => {
     let cancelled = false;
     const ping = async () => {
@@ -117,28 +124,33 @@ function App() {
     };
   }, [settings.apiUrl]);
 
-  // Save sessions to localStorage
   useEffect(() => {
     localStorage.setItem('chat_sessions', JSON.stringify(sessions));
   }, [sessions]);
 
-  // Save activeSessionId to localStorage
   useEffect(() => {
     if (activeSession?.id) {
       localStorage.setItem('chat_active_session_id', activeSession.id);
     }
   }, [activeSession?.id]);
 
-  // Save settings to localStorage
   useEffect(() => {
     localStorage.setItem('chat_settings', JSON.stringify(settings));
   }, [settings]);
 
-  // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [activeSession?.messages, isLoading]);
 
+  const handleAuth = (newToken: string) => {
+    saveToken(newToken);
+    setToken(newToken);
+  };
+
+  const handleLogout = () => {
+    clearToken();
+    setToken(null);
+  };
 
   const handleCreateNewChat = () => {
     const newSession = createNewSession(`Чат ${sessions.length + 1}`);
@@ -154,7 +166,6 @@ function App() {
     e.stopPropagation();
 
     if (sessions.length <= 1) {
-      // Last chat: replace with a fresh one
       const fresh = createNewSession('Главный чат');
       setSessions([fresh]);
       setActiveSessionId(fresh.id);
@@ -169,7 +180,7 @@ function App() {
   };
 
   const handleSendMessage = async (text: string, files: ChatFile[] = []) => {
-    if (!activeSession) return;
+    if (!activeSession || !token) return;
 
     const currentSessionId = activeSession.id;
     const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -183,7 +194,6 @@ function App() {
       status: 'sent',
     };
 
-    // Auto update title if this is the first user message in this session
     const isFirstUserMessage = !activeSession.messages.some((m) => m.sender === 'user');
     let updatedTitle = activeSession.title;
     if (isFirstUserMessage) {
@@ -211,7 +221,7 @@ function App() {
     setIsLoading(true);
 
     try {
-      const reply = await sendMessageToAgent(text, files, settings);
+      const reply = await sendMessageToAgent(text, files, settings, token);
       const botMessage: Message = {
         id: `bot-${Date.now()}`,
         sender: 'bot',
@@ -233,6 +243,12 @@ function App() {
         })
       );
     } catch (err: unknown) {
+      if (err instanceof AuthError) {
+        clearToken();
+        setToken(null);
+        return;
+      }
+
       const errorText = err instanceof Error ? err.message : 'Произошла непредвиденная ошибка';
       const errorMessage: Message = {
         id: `bot-err-${Date.now()}`,
@@ -261,10 +277,17 @@ function App() {
     }
   };
 
+  if (!token) {
+    return (
+      <AuthModal
+        apiBaseUrl={getApiBaseUrl(settings.apiUrl)}
+        onAuth={handleAuth}
+      />
+    );
+  }
 
   return (
     <div className="chat-app-container">
-      {/* Left Sidebar for chat navigation */}
       <ChatSidebar
         sessions={sessions}
         activeSessionId={activeSession?.id || ''}
@@ -275,9 +298,7 @@ function App() {
         onCloseMobile={() => setIsSidebarOpen(false)}
       />
 
-      {/* Main Chat Layout Area */}
       <div className="chat-app-layout">
-        {/* Header */}
         <ChatHeader
           onDeleteChat={() => {
             if (activeSession) {
@@ -290,7 +311,6 @@ function App() {
           isOnline={isOnline}
         />
 
-        {/* Main chat messages container */}
         <main className="chat-main-area">
           <div className="chat-scroll-content">
             {activeSession && activeSession.messages.length <= 1 && (
@@ -302,7 +322,6 @@ function App() {
                 <ChatMessage key={msg.id} message={msg} />
               ))}
 
-              {/* Typing indicator */}
               {isLoading && (
                 <div className="message-row bot-row">
                   <div className="message-avatar" aria-hidden="true">
@@ -335,18 +354,17 @@ function App() {
           </div>
         </main>
 
-        {/* Input area */}
         <footer className="chat-footer-area">
           <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
         </footer>
 
-        {/* Settings modal */}
         {isSettingsOpen && (
           <SettingsModal
             isOpen={isSettingsOpen}
             onClose={() => setIsSettingsOpen(false)}
             settings={settings}
             onSaveSettings={setSettings}
+            onLogout={handleLogout}
           />
         )}
       </div>

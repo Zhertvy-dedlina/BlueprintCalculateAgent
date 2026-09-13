@@ -1,0 +1,82 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: DockerFile
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/ai_service
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      MINIO_URL: http://minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      MINIO_BUCKET: ai-service
+      JWT_SECRET: ${JWT_SECRET:-ThisIsAVeryLongSecretKeyThatIsAtLeast32BytesLong123!}
+      GIGA_AUTH_KEY: ${GIGA_AUTH_KEY:-MDFhMDY4NTYtMGU0Mi03YmE1LWEzYTYtNTcwNGEyN2MwNWYwOmVkZTk5OTBiLWYzMzQtNGQ4NS1hY2I5LTg2YWRiYTEwOWU2MQ==}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    networks:
+      - blueprint-net
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ai_service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - blueprint-net
+
+  minio:
+    image: quay.io/minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - blueprint-net
+
+  minio-init:
+    image: quay.io/minio/mc
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 minioadmin minioadmin &&
+      mc mb -p local/ai-service
+      "
+    networks:
+      - blueprint-net
+
+volumes:
+  postgres-data:
+  minio-data:
+
+networks:
+  blueprint-net:
+    driver: bridge

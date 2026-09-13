@@ -6,6 +6,7 @@ interface SettingsModalProps {
   onClose: () => void;
   settings: ChatSettings;
   onSaveSettings: (settings: ChatSettings) => void;
+  onLogout: () => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -13,6 +14,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onClose,
   settings,
   onSaveSettings,
+  onLogout,
 }) => {
   const [apiUrl, setApiUrl] = useState(settings.apiUrl);
 
@@ -22,6 +24,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     e.preventDefault();
     onSaveSettings({ apiUrl: apiUrl.trim() });
     onClose();
+  };
+
+  const handleLogout = () => {
+    onClose();
+    onLogout();
   };
 
   return (
@@ -42,7 +49,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         <form onSubmit={handleSubmit} className="modal-body">
           <div className="form-group">
             <label className="form-label" htmlFor="api-url-input">
-              URL эндпоинта чата (API)
+              URL эндпоинта AI-анализа
             </label>
             <input
               id="api-url-input"
@@ -50,22 +57,27 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               className="form-input"
               value={apiUrl}
               onChange={(e) => setApiUrl(e.target.value)}
-              placeholder="http://localhost:8080/api/chat"
+              placeholder="http://localhost:8080/api/ai/analyze"
             />
             <p className="form-help">
-              Адрес бэкенда для отправки сообщений и файлов (POST запрос).
-              Статус подключения проверяется автоматически каждые 30 секунд через эндпоинт <code>/health</code>.
-              Если бэкенд недоступен, чат автоматически использует локальные ответы.
+              Адрес бэкенда для отправки сообщений и файлов (POST multipart/form-data).
+              Статус подключения проверяется автоматически каждые 10 секунд.
+              Если бэкенд недоступен, чат использует локальные ответы.
             </p>
           </div>
 
-          <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>
-              Отмена
+          <div className="modal-footer" style={{ justifyContent: 'space-between' }}>
+            <button type="button" className="btn btn-danger" onClick={handleLogout}>
+              Выйти
             </button>
-            <button type="submit" className="btn btn-primary">
-              Сохранить
-            </button>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button type="button" className="btn btn-secondary" onClick={onClose}>
+                Отмена
+              </button>
+              <button type="submit" className="btn btn-primary">
+                Сохранить
+              </button>
+            </div>
           </div>
         </form>
       </div>
